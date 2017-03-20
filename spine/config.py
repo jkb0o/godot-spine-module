@@ -5,7 +5,8 @@ def can_build(platform):
   
   
 def configure(env):
-  env.Append(CPPFLAGS=['-DNEED_LONG_INT'])
+  #env.Append(CPPFLAGS=['-DNEED_LONG_INT'])
+  pass
 	
   
   
