@@ -938,7 +938,7 @@ bool Spine::add_attachment_node(const String& p_bone_name, const Variant& p_node
 
 	if (obj->has_meta("spine_meta")) {
 
-		AttachmentNode *info = (AttachmentNode *) ((size_t) obj->get_meta("spine_meta"));
+		AttachmentNode *info = (AttachmentNode *) ((uint64_t) obj->get_meta("spine_meta"));
 		if (info->bone != bone) {
 			// add to different bone, remove first
 			remove_attachment_node(info->bone->data->name, p_node);
@@ -959,7 +959,7 @@ bool Spine::add_attachment_node(const String& p_bone_name, const Variant& p_node
 	info.ofs = p_ofs;
 	info.scale = p_scale;
 	info.rot = p_rot;
-	obj->set_meta("spine_meta", (size_t) &info);
+	obj->set_meta("spine_meta", (uint64_t) &info);
 
 	return true;
 }
@@ -977,7 +977,7 @@ bool Spine::remove_attachment_node(const String& p_bone_name, const Variant& p_n
 	if (!obj->has_meta("spine_meta"))
 		return false;
 
-	AttachmentNode *info = (AttachmentNode *)((size_t)obj->get_meta("spine_meta"));
+	AttachmentNode *info = (AttachmentNode *)((uint64_t)obj->get_meta("spine_meta"));
 	ERR_FAIL_COND_V(info->bone != bone, false);
 	obj->set_meta("spine_meta", NULL);
 	memdelete(info->ref);
