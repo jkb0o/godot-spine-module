@@ -62,11 +62,19 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 
 	FileAccess *f = FileAccess::open(p_path, FileAccess::READ);
 	ERR_FAIL_COND_V(!f, NULL);
+	
+	String str_path = String::utf8(p_path);
 
-	*p_length = f->get_len();
 	char *data = (char *)_malloc(*p_length, __FILE__, __LINE__);
+	*p_length = f->get_len();
+	data = (char *)_malloc(*p_length, __FILE__, __LINE__);
 	ERR_FAIL_COND_V(data == NULL, NULL);
 	f->get_buffer((uint8_t *)data, *p_length);
+	if (str_path.ends_with(".json") || str_path.ends_with(".atlas")){
+		for (int i=0; i<*p_length; i++){
+			if (data[i]=='/') data[i] = '-';
+		}
+	}
 
 	memdelete(f);
 	return data;

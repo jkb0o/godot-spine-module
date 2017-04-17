@@ -112,7 +112,7 @@ private:
 	typedef List<AttachmentNode> AttachmentNodes;
 	AttachmentNodes attachment_nodes;
 
-	static void spine_animation_callback(spAnimationState* p_state, int p_track, spEventType p_type, spEvent* p_event, int loop_count);
+	static void spine_animation_callback(spAnimationState* p_state, spEventType p_type, spTrackEntry* p_track, spEvent* p_event);
 	void _on_animation_state_event(int p_track, spEventType p_type, spEvent *p_event, int p_loop_count);
 
 	void _spine_dispose();

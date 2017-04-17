@@ -53,9 +53,9 @@ Spine::SpineResource::~SpineResource() {
 }
 
 
-void Spine::spine_animation_callback(spAnimationState* p_state, int p_track, spEventType p_type, spEvent* p_event, int loop_count) {
+void Spine::spine_animation_callback(spAnimationState* p_state, spEventType p_type, spTrackEntry* p_track, spEvent* p_event) {
 
-	((Spine*)p_state->rendererObject)->_on_animation_state_event(p_track, p_type, p_event, loop_count);
+	((Spine*)p_state->rendererObject)->_on_animation_state_event(p_track->trackIndex, p_type, p_event, 1);
 }
 
 void Spine::_on_animation_state_event(int p_track, spEventType p_type, spEvent *p_event, int p_loop_count) {
@@ -172,7 +172,7 @@ void Spine::_animation_draw() {
 		switch (slot->attachment->type) {
 
 			case SP_ATTACHMENT_REGION: {
-
+				
 				spRegionAttachment* attachment = (spRegionAttachment*)slot->attachment;
 				is_fx = strstr(attachment->path, fx_prefix) != NULL;					
 				spRegionAttachment_computeWorldVertices(attachment, slot->bone, world_verts.ptr());
