@@ -979,7 +979,7 @@ bool Spine::remove_attachment_node(const String& p_bone_name, const Variant& p_n
 
 	AttachmentNode *info = (AttachmentNode *)((uint64_t)obj->get_meta("spine_meta"));
 	ERR_FAIL_COND_V(info->bone != bone, false);
-	obj->set_meta("spine_meta", NULL);
+	obj->set_meta("spine_meta", Variant());
 	memdelete(info->ref);
 	attachment_nodes.erase(info->E);
 
