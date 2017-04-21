@@ -143,6 +143,7 @@ public:
 	void clear(int p_track = -1);
 	void stop();
 	bool is_playing(int p_track = 0) const;
+	float get_animation_length(String p_animation) const;
 	void set_forward(bool p_forward = true);
 	bool is_forward() const;
 	String get_current_animation(int p_track = 0) const;

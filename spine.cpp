@@ -475,6 +475,18 @@ bool Spine::_get(const StringName& p_name, Variant &r_ret) const {
 	return true;
 }
 
+float Spine::get_animation_length(String p_animation) const {
+	if ( state == NULL) return 0;
+	for (int i = 0; i < state->data->skeletonData->animationsCount; i++) {
+		spAnimation* anim = state->data->skeletonData->animations[i];
+		if (anim->name == p_animation){
+			return anim->duration;
+		}
+	}
+	return 0;
+	
+}
+
 void Spine::_get_property_list(List<PropertyInfo> *p_list) const {
 
 	List<String> names;
@@ -1115,6 +1127,7 @@ void Spine::_bind_methods() {
 	ObjectTypeDB::bind_method(_MD("clear", "track"), &Spine::clear);
 	ObjectTypeDB::bind_method(_MD("stop"), &Spine::stop);
 	ObjectTypeDB::bind_method(_MD("is_playing", "track"), &Spine::is_playing);
+
 	ObjectTypeDB::bind_method(_MD("get_current_animation"), &Spine::get_current_animation);
 	ObjectTypeDB::bind_method(_MD("stop_all"), &Spine::stop_all);
 	ObjectTypeDB::bind_method(_MD("reset"), &Spine::reset);
@@ -1122,6 +1135,7 @@ void Spine::_bind_methods() {
 	ObjectTypeDB::bind_method(_MD("tell"), &Spine::tell);
 	ObjectTypeDB::bind_method(_MD("set_active", "active"), &Spine::set_active);
 	ObjectTypeDB::bind_method(_MD("is_active"), &Spine::is_active);
+	ObjectTypeDB::bind_method(_MD("get_animation_length", "animation"), &Spine::get_animation_length);
 	ObjectTypeDB::bind_method(_MD("set_speed", "speed"), &Spine::set_speed);
 	ObjectTypeDB::bind_method(_MD("get_speed"), &Spine::get_speed);
 	ObjectTypeDB::bind_method(_MD("set_modulate", "modulate"), &Spine::set_modulate);
