@@ -132,7 +132,7 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 				}
 				if (match){
 					data[i] = '-';
-					for (int k=0; i<extra_replaces.size(); i++) data[k] = '-';
+					for (int k=0; k<extra_replaces.size(); k++) data[extra_replaces[k]] = '-';
 					break;
 				}
 			}
