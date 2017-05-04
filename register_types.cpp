@@ -59,9 +59,9 @@ void _spAtlasPage_disposeTexture(spAtlasPage* self) {
 	memdelete(ref);
 }
 
-StringArray _sp_invalid_names;
-char* _spUtil_readFile(const char* p_path, int* p_length) {
 
+char* _spUtil_readFile(const char* p_path, int* p_length) {
+	static Array _sp_invalid_names = Array();
 	FileAccess *f = FileAccess::open(p_path, FileAccess::READ);
 	ERR_FAIL_COND_V(!f, NULL);
 	
@@ -93,17 +93,19 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 	 */
 	
 	if (str_path.ends_with(".atlas")){
-		String current_string = "";
+		Array current_string = Array();
 		bool is_invalid = false;
 		for (int i=0; i<*p_length; i++){
+			if (data[i] == '\r') continue;
 			if (data[i] == '\n'){
 				if (is_invalid) {
-					_sp_invalid_names.push_back(current_string);
+					//print_line("Add invalid index: " + current_string);
+					_sp_invalid_names.append(current_string);
 				}
-				current_string = "";
+				current_string = Array();
 				is_invalid = false;
 			} else {
-				current_string += data[i];
+				current_string.append(data[i]);
 			}
 			if (data[i]=='/') {
 				is_invalid = true;
@@ -115,22 +117,23 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 		for (int i=0; i<*p_length; i++){
 			if (data[i] != '/') continue;
 			for (int j=0; j<_sp_invalid_names.size(); j++){
-				String in = _sp_invalid_names[j];
-				int idx = in.find("/");
+				Array in = _sp_invalid_names[j];
+				int idx = in.find('/');
 				bool match = true;
 				for (int k=0;k<idx;k++){
 					if (i<k) { match=false; break; }
-					if (data[i-k] != in[idx-k]){ match=false; break; }
+					if (data[i-k] != (int)(in[idx-k])){ match=false; break; }
 				}
 				if (!match) continue;
 				
 				IntArray extra_replaces;
-				for (int k=1; k<in.length()-idx;k++){
+				for (int k=1; k<in.size()-idx;k++){
 					if (i+k >= *p_length){ match=false; break; }
-					if (data[i+k] != in[idx+k]) { match=false; break; }
+					if (data[i+k] != (int)(in[idx+k])) { match=false; break; }
 					if (data[i+k] == '/') extra_replaces.push_back(i+k);
 				}
 				if (match){
+					//print_line("Fix invalid index: " + in + ", replaces: " + itos(extra_replaces.size()));
 					data[i] = '-';
 					for (int k=0; k<extra_replaces.size(); k++) data[extra_replaces[k]] = '-';
 					break;
