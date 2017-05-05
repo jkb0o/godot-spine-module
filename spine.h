@@ -34,6 +34,7 @@
 #include "scene/resources/shape_2d.h"
 #include <spine/spine.h>
 #include "spine_batcher.h"
+#include "core/array.h"
 
 class CollisionObject2D;
 
@@ -55,8 +56,10 @@ public:
 	class SpineResource : public Resource {
 
 		OBJ_TYPE(SpineResource, Resource);
+	
 
 	public:
+		
 		SpineResource();
 		~SpineResource();
 
@@ -65,8 +68,6 @@ public:
 	};
 
 private:
-
-
 	Ref<SpineResource> res;
 
 	spSkeleton* skeleton;
@@ -122,6 +123,8 @@ private:
 	void _on_fx_draw();
 
 protected:
+	static Array *invalid_names;
+	
 	bool _set(const StringName& p_name, const Variant& p_value);
 	bool _get(const StringName& p_name, Variant &r_ret) const;
 	void _get_property_list(List<PropertyInfo> *p_list) const;
@@ -130,6 +133,7 @@ protected:
 	static void _bind_methods();
 
 public:
+	static Array get_invalid_names();
 
 	// set/get spine resource
 	void set_resource(Ref<SpineResource> p_data);

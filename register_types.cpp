@@ -61,7 +61,6 @@ void _spAtlasPage_disposeTexture(spAtlasPage* self) {
 
 
 char* _spUtil_readFile(const char* p_path, int* p_length) {
-	static Array _sp_invalid_names = Array();
 	FileAccess *f = FileAccess::open(p_path, FileAccess::READ);
 	ERR_FAIL_COND_V(!f, NULL);
 	
@@ -81,9 +80,9 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 	 *			This mostly because of names with slashes in resulting atlas and attachments
 	 *			(head/eyes, head/face, body/torso, etc.)
 	 * I'm to lazy to make any spine research and have no time for waiting this issue
-	 * to be resolved, so I just remember all names with slashes in atlas, replace slashes with 
+	 * to be resolved, so I just remember all names with slashes in atlas, replace slashes with
 	 * '-' and make same thing with skeleton (.json or .skel) for matching names.
-	 * 
+	 *
 	 * It works good for me, but may be buggy in your case.
 	 * I promice:
 	 * - to create issue about this github
@@ -92,6 +91,7 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 	 *
 	 */
 	
+	Array _sp_invalid_names = Spine::get_invalid_names();
 	if (str_path.ends_with(".atlas")){
 		Array current_string = Array();
 		bool is_invalid = false;
@@ -140,9 +140,9 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 				}
 			}
 		}
+		
 		_sp_invalid_names.resize(0);
 	}
-
 	memdelete(f);
 	return data;
 }
