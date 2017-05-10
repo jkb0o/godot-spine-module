@@ -662,6 +662,9 @@ bool Spine::play(const String& p_name, real_t p_cunstom_scale, bool p_loop, int 
 	spTrackEntry *entry = spAnimationState_setAnimation(state, p_track, animation, p_loop);
 	entry->delay = p_delay;
 	current_animation = p_name;
+	if (skip_frames){
+		frames_to_skip = 0;
+	}
 
 	_set_process(true);
 	playing = true;
