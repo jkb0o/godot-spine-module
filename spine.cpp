@@ -369,8 +369,16 @@ void Spine::_animation_process(float p_delta) {
 	if (speed_scale == 0)
 		return;
 	p_delta *= speed_scale;
-
-	spAnimationState_update(state, forward ? p_delta : -p_delta);
+	process_delta += p_delta;
+	if (skip_frames){
+		frames_to_skip--;
+		if (frames_to_skip >= 0){
+			return;
+		} else {
+			frames_to_skip = skip_frames;
+		}
+	}
+	spAnimationState_update(state, forward ? process_delta : -process_delta);
 	spAnimationState_apply(state, skeleton);
 	spSkeleton_updateWorldTransform(skeleton);
 
@@ -395,6 +403,7 @@ void Spine::_animation_process(float p_delta) {
 		node->call("set_rot", Math::atan2(bone->c, bone->d) + Math::deg2rad(info.rot));
 	}
 	update();
+	process_delta = 0;
 }
 
 void Spine::_set_process(bool p_process, bool p_force) {
@@ -706,6 +715,15 @@ void Spine::set_forward(bool p_forward) {
 bool Spine::is_forward() const {
 
 	return forward;
+}
+
+void Spine::set_skip_frames(int p_skip_frames){
+	skip_frames = p_skip_frames;
+	frames_to_skip = 0;
+}
+
+int Spine::get_skip_frames() const {
+	return skip_frames;
 }
 
 String Spine::get_current_animation(int p_track) const {
@@ -1146,6 +1164,8 @@ void Spine::_bind_methods() {
 	ObjectTypeDB::bind_method(_MD("get_animation_length", "animation"), &Spine::get_animation_length);
 	ObjectTypeDB::bind_method(_MD("set_speed", "speed"), &Spine::set_speed);
 	ObjectTypeDB::bind_method(_MD("get_speed"), &Spine::get_speed);
+	ObjectTypeDB::bind_method(_MD("set_skip_frames", "frames"), &Spine::set_skip_frames);
+	ObjectTypeDB::bind_method(_MD("get_skip_frames"), &Spine::get_skip_frames);
 	ObjectTypeDB::bind_method(_MD("set_modulate", "modulate"), &Spine::set_modulate);
 	ObjectTypeDB::bind_method(_MD("get_modulate"), &Spine::get_modulate);
 	ObjectTypeDB::bind_method(_MD("set_flip_x", "modulate"), &Spine::set_flip_x);
@@ -1181,7 +1201,7 @@ void Spine::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "playback/speed", PROPERTY_HINT_RANGE, "-64,64,0.01"), _SCS("set_speed"), _SCS("get_speed"));
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "playback/active"), _SCS("set_active"), _SCS("is_active"));
 	//ADD_PROPERTY(PropertyInfo(Variant::REAL, "playback/pos", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), _SCS("seek"), _SCS("tell"));
-
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "playback/skip_frames", PROPERTY_HINT_RANGE, "0,10,1"), _SCS("set_skip_frames"), _SCS("get_skip_frames"));
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "debug/bones"), _SCS("set_debug_bones"), _SCS("is_debug_bones"));
 
 	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "modulate"), _SCS("set_modulate"), _SCS("get_modulate"));
@@ -1189,6 +1209,7 @@ void Spine::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "flip_y"), _SCS("set_flip_y"), _SCS("is_flip_y"));
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "fx_prefix"), _SCS("set_fx_slot_prefix"), _SCS("get_fx_slot_prefix"));
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "resource", PROPERTY_HINT_RESOURCE_TYPE, "SpineResource"), _SCS("set_resource"), _SCS("get_resource")); //, PROPERTY_USAGE_NOEDITOR));
+	
 
 	ADD_SIGNAL(MethodInfo("animation_start", PropertyInfo(Variant::INT, "track")));
 	ADD_SIGNAL(MethodInfo("animation_complete", PropertyInfo(Variant::INT, "track"), PropertyInfo(Variant::INT, "loop_count")));
@@ -1263,6 +1284,9 @@ Spine::Spine()
 	active = false;
 	playing = false;
 	forward = true;
+	process_delta = 0;
+	skip_frames = 0;
+	frames_to_skip = 0;
 
 	debug_bones = false;
 	debug_attachment_region = false;

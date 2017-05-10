@@ -82,6 +82,9 @@ private:
 	bool active;
 	bool playing;
 	bool forward;
+	int skip_frames;
+	int frames_to_skip;
+	float process_delta;
 	bool debug_bones;
 	bool debug_attachment_region;
 	bool debug_attachment_mesh;
@@ -150,6 +153,8 @@ public:
 	float get_animation_length(String p_animation) const;
 	void set_forward(bool p_forward = true);
 	bool is_forward() const;
+	void set_skip_frames(int p_skip_frames);
+	int get_skip_frames() const;
 	String get_current_animation(int p_track = 0) const;
 	void stop_all();
 	void reset();
