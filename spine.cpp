@@ -423,6 +423,7 @@ void Spine::_set_process(bool p_process, bool p_force) {
 bool Spine::_set(const StringName& p_name, const Variant& p_value) {
 
 	String name = p_name;
+    print_line("Spine._set(" + p_name + ", " + (String)p_value);
 
 	if (name == "playback/play") {
 
@@ -573,10 +574,12 @@ void Spine::_notification(int p_what) {
 	case NOTIFICATION_READY: {
 
 		// add fx node as child
-		fx_node->connect("draw", this, "_on_fx_draw");
-		fx_node->set_z(1);
-		fx_node->set_z_as_relative(false);
-		add_child(fx_node);
+        if (fx_node->get_parent() == NULL){
+            fx_node->connect("draw", this, "_on_fx_draw");
+            fx_node->set_z(1);
+            fx_node->set_z_as_relative(false);
+            add_child(fx_node);
+        }
 
 		if (!get_tree()->is_editor_hint() && has(autoplay)) {
 			play(autoplay);
@@ -604,8 +607,8 @@ void Spine::_notification(int p_what) {
 	} break;
 
 	case NOTIFICATION_EXIT_TREE: {
-
-		stop_all();
+		if (!get_tree()->is_editor_hint()) 
+		    stop_all();
 	} break;
 	}
 }
@@ -1233,7 +1236,7 @@ Rect2 Spine::get_item_rect() const {
 	if (skeleton == NULL)
 		return Node2D::get_item_rect();
 
-	float minX = 65535, minY = 65535, maxX = -65535, maxY = -65535;
+	float minX = 300, minY = 300, maxX = -300, maxY = -300;
 	bool attached = false;
 	for (int i = 0; i < skeleton->slotsCount; ++i) {
 
