@@ -423,8 +423,6 @@ void Spine::_set_process(bool p_process, bool p_force) {
 bool Spine::_set(const StringName& p_name, const Variant& p_value) {
 
 	String name = p_name;
-    print_line("Spine._set(" + p_name + ", " + (String)p_value);
-
 	if (name == "playback/play") {
 
 		String which = p_value;
