@@ -29,7 +29,7 @@
 #ifdef MODULE_SPINE_ENABLED
 #include "spine_batcher.h"
 
-#define BATCH_CAPACITY 1024
+#define BATCH_CAPACITY 2048
 
 SpineBatcher::SetBlendMode::SetBlendMode(int p_mode) {
 
@@ -79,8 +79,8 @@ void SpineBatcher::add(Ref<Texture> p_texture,
 	Color *p_color, bool flip_x, bool flip_y) {
 
 	if (p_texture != elements->texture
-		|| elements->vertices_count + (p_vertices_count >> 1) > BATCH_CAPACITY
-		|| elements->indies_count + p_indies_count > BATCH_CAPACITY * 3) {
+		|| elements->vertices_count + (p_vertices_count >> 1) >= BATCH_CAPACITY
+		|| elements->indies_count + p_indies_count >= BATCH_CAPACITY * 3) {
 	
 		push_elements();
 		elements->texture = p_texture;
