@@ -58,6 +58,7 @@ class SpineBatcher {
 	};
 
 	struct Elements : Command {
+        static List<Command *> free;
 		Ref<Texture> texture;
 		int vertices_count;
 		int indies_count;
@@ -69,6 +70,9 @@ class SpineBatcher {
 		Elements();
 		~Elements();
 		void draw(RID ci);
+        static Command* take();
+        static void retrieve(Command* elem);
+
 	};
 
 	Elements *elements;
