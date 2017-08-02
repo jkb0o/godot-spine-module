@@ -90,6 +90,7 @@ private:
 	bool debug_attachment_mesh;
 	bool debug_attachment_skinned_mesh;
 	bool debug_attachment_bounding_box;
+    List<uint64_t> debug_avarage_animate_ticks;
 	String current_animation;
 	bool loop;
 	String skin;
@@ -214,6 +215,7 @@ public:
 	bool is_debug_bones() const;
 	void set_debug_attachment(DebugAttachmentMode p_mode, bool p_enable);
 	bool is_debug_attachment(DebugAttachmentMode p_mode) const;
+    float get_debug_animate_ticks_msec() const;
 
 	//void seek(float p_time, bool p_update = false);
 	//void seek_delta(float p_time, float p_delta);

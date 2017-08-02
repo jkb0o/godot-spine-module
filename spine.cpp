@@ -29,6 +29,7 @@
 #ifdef MODULE_SPINE_ENABLED
 
 #include "core/io/resource_loader.h"
+#include "core/os/os.h"
 #include "scene/2d/collision_object_2d.h"
 #include "scene/resources/convex_polygon_shape_2d.h"
 #include "method_bind_ext.inc"
@@ -116,6 +117,7 @@ void Spine::_spine_dispose() {
 		memdelete(node.ref);
 	}
 	attachment_nodes.clear();
+    debug_avarage_animate_ticks.clear();
 
 	update();
 }
@@ -151,6 +153,7 @@ void Spine::_animation_draw() {
 	if (skeleton == NULL)
 		return;
 
+    uint64_t start_time = OS::get_singleton()->get_ticks_usec();
 	skeleton->r = modulate.r;
 	skeleton->g = modulate.g;
 	skeleton->b = modulate.b;
@@ -251,6 +254,10 @@ void Spine::_animation_draw() {
 	}
 	batcher.flush();
 	fx_node->update();
+
+    if (debug_avarage_animate_ticks.size() > 0){
+        debug_avarage_animate_ticks[0] += OS::get_singleton()->get_ticks_usec() - start_time;
+    }
 
 	// Slots.
 	if (debug_attachment_region || debug_attachment_mesh || debug_attachment_skinned_mesh || debug_attachment_bounding_box) {
@@ -368,6 +375,7 @@ void Spine::_animation_process(float p_delta) {
 
 	if (speed_scale == 0)
 		return;
+    uint64_t start_time = OS::get_singleton()->get_ticks_usec();
 	p_delta *= speed_scale;
 	process_delta += p_delta;
 	if (skip_frames){
@@ -402,6 +410,11 @@ void Spine::_animation_process(float p_delta) {
 		node->call("set_scale", Vector2(spBone_getWorldScaleX(bone), spBone_getWorldScaleY(bone)) * info.scale);
 		node->call("set_rot", Math::atan2(bone->c, bone->d) + Math::deg2rad(info.rot));
 	}
+    uint64_t debug_delta = OS::get_singleton()->get_ticks_usec() - start_time;
+    debug_avarage_animate_ticks.push_front(debug_delta);
+    if (debug_avarage_animate_ticks.size() > 10) {
+        debug_avarage_animate_ticks.pop_back();
+    }
 	update();
 	process_delta = 0;
 }
@@ -1145,6 +1158,17 @@ bool Spine::is_debug_attachment(DebugAttachmentMode p_mode) const {
 	return false;
 }
 
+float Spine::get_debug_animate_ticks_msec() const {
+    uint64_t ticks = 0;
+    if (debug_avarage_animate_ticks.size() == 0){
+        return 0;
+    }
+    for (int i = 0; i < debug_avarage_animate_ticks.size(); ++i){
+		ticks += debug_avarage_animate_ticks[i];
+    }
+    return 0.001*(ticks/debug_avarage_animate_ticks.size());
+}
+
 void Spine::_bind_methods() {
 
 	ObjectTypeDB::bind_method(_MD("set_resource", "spine"), &Spine::set_resource);
@@ -1198,6 +1222,7 @@ void Spine::_bind_methods() {
 	ObjectTypeDB::bind_method(_MD("is_debug_bones"), &Spine::is_debug_bones);
 	ObjectTypeDB::bind_method(_MD("set_debug_attachment", "mode", "enable"), &Spine::set_debug_attachment);
 	ObjectTypeDB::bind_method(_MD("is_debug_attachment", "mode"), &Spine::is_debug_attachment);
+	ObjectTypeDB::bind_method(_MD("get_debug_animate_ticks_msec"), &Spine::get_debug_animate_ticks_msec);
 
 	ObjectTypeDB::bind_method(_MD("_on_fx_draw"), &Spine::_on_fx_draw);
 
@@ -1311,6 +1336,7 @@ Spine::Spine()
 Spine::~Spine() {
 
 	// cleanup
+   
 	_spine_dispose();
 }
 
