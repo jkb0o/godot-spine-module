@@ -111,12 +111,12 @@ void SpineBatcher::add(Ref<Texture> p_texture,
     //print_line("add vertices" + itos(p_vertices_count) + ":" + itos(elements->vertices_count) + "  " + 
     //                           itos(p_indies_count) + ":" + itos(elements->indies_count));
 
-    if ( (p_vertices_count >> 1) > BATCH_CAPACITY || p_indies_count > BATCH_CAPACITY * 3) return;
+    if ( (p_vertices_count >> 1) >= BATCH_CAPACITY || p_indies_count >= BATCH_CAPACITY * 3) return;
 
     //print_line("adding");
 	if (p_texture != elements->texture
-		|| elements->vertices_count + (p_vertices_count >> 1) > BATCH_CAPACITY
-		|| elements->indies_count + p_indies_count > BATCH_CAPACITY * 3) {
+		|| elements->vertices_count + (p_vertices_count >> 1) >= BATCH_CAPACITY
+		|| elements->indies_count + p_indies_count >= BATCH_CAPACITY * 3) {
 	
         //print_line("add oversized, push_elements");
 		push_elements();
