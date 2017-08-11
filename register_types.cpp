@@ -66,9 +66,9 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 	
 	String str_path = String::utf8(p_path);
 
-	char *data = (char *)_malloc(*p_length, __FILE__, __LINE__);
 	*p_length = f->get_len();
-	data = (char *)_malloc(*p_length, __FILE__, __LINE__);
+    char *data = (char *)memalloc(*p_length);
+	//data = (char *)memalloc(*p_length);
 	ERR_FAIL_COND_V(data == NULL, NULL);
 	f->get_buffer((uint8_t *)data, *p_length);
 	
@@ -90,7 +90,7 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 	 * - may be find actual reason of my buggy animations
 	 *
 	 */
-	
+
 	Array _sp_invalid_names = Spine::get_invalid_names();
 	if (str_path.ends_with(".atlas")){
 		Array current_string = Array();
@@ -176,16 +176,16 @@ public:
 			json->scale = 1;
 			
 			res->data = spSkeletonJson_readSkeletonDataFile(json, p_path.utf8().get_data());
-			spSkeletonJson_dispose(json);
 			ERR_EXPLAIN(json->error ? json->error : "");
+			spSkeletonJson_dispose(json);
 			ERR_FAIL_COND_V(res->data == NULL, RES());
 		} else {
 			spSkeletonBinary* bin  = spSkeletonBinary_create(res->atlas);
 			ERR_FAIL_COND_V(bin == NULL, RES());
 			bin->scale = 1;
 			res->data = spSkeletonBinary_readSkeletonDataFile(bin, p_path.utf8().get_data());
-			spSkeletonBinary_dispose(bin);
 			ERR_EXPLAIN(bin->error ? bin->error : "");
+			spSkeletonBinary_dispose(bin);
 			ERR_FAIL_COND_V(res->data == NULL, RES());
 		}
 			
