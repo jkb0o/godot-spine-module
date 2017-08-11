@@ -32,7 +32,7 @@
 #include "core/os/os.h"
 #include "scene/2d/collision_object_2d.h"
 #include "scene/resources/convex_polygon_shape_2d.h"
-#include "method_bind_ext.inc"
+#include "method_bind_ext.gen.inc"
 
 #include "spine.h"
 #include <spine/spine.h>
