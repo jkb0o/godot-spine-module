@@ -148,7 +148,7 @@ char* _spUtil_readFile(const char* p_path, int* p_length) {
 }
 
 static void *spine_malloc(size_t p_size) {
-
+    if (p_size == 0) return 0;
 	return memalloc(p_size);
 }
 
