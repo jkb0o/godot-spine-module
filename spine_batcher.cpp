@@ -97,6 +97,7 @@ void SpineBatcher::Elements::retrieve(Command* elem){
     if (e){
         e->vertices_count = 0;
         e->indies_count = 0;
+        e->texture.unref();
         free.push_back(e);
     } else {
         memdelete(elem);
@@ -111,6 +112,7 @@ void SpineBatcher::add(Ref<Texture> p_texture,
     //print_line("add vertices" + itos(p_vertices_count) + ":" + itos(elements->vertices_count) + "  " + 
     //                           itos(p_indies_count) + ":" + itos(elements->indies_count));
 
+    if ( p_texture.is_null() ) return;
     if ( (p_vertices_count >> 1) >= BATCH_CAPACITY || p_indies_count >= BATCH_CAPACITY * 3) return;
 
     //print_line("adding");
