@@ -319,8 +319,8 @@ spAtlas* spAtlas_createFromFile(const char* path, void* rendererObject) {
 	if (lastSlash == path) lastSlash++; /* Never drop starting slash. */
 	dirLength = (int)(lastSlash ? lastSlash - path : 0);
 	dir = MALLOC(char, dirLength + 1);
-	memcpy(dir, path, dirLength);
-	dir[dirLength] = '\0';
+    	memcpy(dir, path, dirLength +1);
+    	dir[dirLength+1] = '\0';
 
 	data = _spUtil_readFile(path, &length);
 	if (data) atlas = spAtlas_create(data, length, dir, rendererObject);
